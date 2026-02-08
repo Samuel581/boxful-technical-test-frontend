@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Layout } from "antd";
-import NavLinks from "@/components/features/order/NavLinks";
+import NavLinks from "@/app/components/features/order/NavLinks";
 
 const { Sider, Header, Content } = Layout;
 
