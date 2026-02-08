@@ -1,4 +1,4 @@
-import CreateOrderForm from "@/components/features/order/CreateOrderForm";
+import CreateOrderForm from "@/app/components/features/order/CreateOrderForm";
 
 export default function CreateOrderPage() {
   return <CreateOrderForm />;

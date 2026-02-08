@@ -1,4 +1,4 @@
-import AuthPanelLayout from "@/components/layout/AuthPanelLayout";
+import AuthPanelLayout from "@/app/components/layout/AuthPanelLayout";
 
 export default function AuthLayout({
   children,
