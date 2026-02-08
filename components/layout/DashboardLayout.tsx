@@ -2,14 +2,15 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { Layout, Button, Menu } from "antd";
+import { usePathname } from "next/navigation";
+import { Layout } from "antd";
+import NavLinks from "@/components/features/order/NavLinks";
 
 const { Sider, Header, Content } = Layout;
 
 const SIDEBAR_WIDTH = 240;
 const TOP_BAR_HEIGHT = 56;
-
+  
 const routeTitles: Record<string, string> = {
   "/dashboard": "Dashboard",
   "/dashboard/create-order": "Crear orden",
@@ -26,7 +27,6 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
   const pageTitle = getPageTitle(pathname);
 
   return (
@@ -34,11 +34,13 @@ export default function DashboardLayout({
       <Sider
         width={SIDEBAR_WIDTH}
         style={{
-          background: "#ffffff",
+          background: "#f8f9fa",
           borderRight: "1px solid #f0f0f0",
           padding: "24px 16px",
         }}
       >
+
+       {/* Logo */}
         <Link href="/dashboard" style={{ display: "block", marginBottom: 24 }}>
           <div
             style={{
@@ -68,62 +70,7 @@ export default function DashboardLayout({
           </div>
         </Link>
 
-        <div
-          style={{
-            fontSize: 12,
-            fontWeight: 600,
-            color: "#595959",
-            letterSpacing: "0.05em",
-            marginBottom: 16,
-          }}
-        >
-          MENÚ
-        </div>
-
-        <div style={{ marginBottom: 16 }}>
-          <Link href="/dashboard/create-order">
-            <Button
-              type="primary"
-              block
-              size="large"
-              style={{
-                backgroundColor: "#4242B5",
-                borderColor: "#4242B5",
-                height: 44,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-              }}
-            >
-              <span style={{ fontSize: 18 }}>+</span>
-              Crear orden
-            </Button>
-          </Link>
-        </div>
-
-        <Menu
-          mode="inline"
-          selectedKeys={[pathname]}
-          onClick={({ key }) => router.push(key)}
-          style={{
-            border: "none",
-            background: "transparent",
-            fontSize: 14,
-            color: "#262626",
-          }}
-          items={[
-            {
-              key: "/dashboard/history",
-              icon: (
-                <span style={{ marginRight: 8, opacity: 0.85 }}>
-                  &#9776;
-                </span>
-              ),
-              label: "Historial",
-            },
-          ]}
-        />
+        <NavLinks />
       </Sider>
 
       <Layout>
@@ -131,7 +78,7 @@ export default function DashboardLayout({
           style={{
             height: TOP_BAR_HEIGHT,
             padding: "0 24px",
-            background: "#f5f5f5",
+            background: "#F2EEE6",
             borderBottom: "1px solid #f0f0f0",
             display: "flex",
             alignItems: "center",
@@ -159,8 +106,8 @@ export default function DashboardLayout({
         <Content
           style={{
             padding: 24,
-            background: "#ffffff",
-            minHeight: `calc(100vh - ${TOP_BAR_HEIGHT}px)`,
+            background: "#f8f9fa",
+            flex: 1,
           }}
         >
           {children}
