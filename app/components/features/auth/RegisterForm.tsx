@@ -13,6 +13,10 @@ import {
   DatePicker,
   Space,
 } from "antd";
+import dayjs from "dayjs";
+import { Sex } from "@/app/types/auth";
+import type { RegisterDto } from "@/app/types/auth";
+import { authService } from "@/app/services/authService";
 
 const { Title, Text } = Typography;
 
@@ -21,9 +25,9 @@ const formLayout = {
 };
 
 const GENDER_OPTIONS = [
-  { value: "masculino", label: "Masculino" },
-  { value: "femenino", label: "Femenino" },
-  { value: "otro", label: "Otro" },
+  { value: Sex.M, label: "Masculino" },
+  { value: Sex.F, label: "Femenino" },
+  { value: Sex.OTHER, label: "Otro" },
 ];
 
 const COUNTRY_CODE_OPTIONS = [
@@ -37,9 +41,14 @@ const COUNTRY_CODE_OPTIONS = [
 export default function RegisterForm() {
   const [form] = Form.useForm();
 
-  const onFinish = (values: Record<string, unknown>) => {
-    console.log("Register values:", values);
-    // TODO: integrate registration
+  const onFinish = (values: RegisterDto & { countryCode: string; confirmPassword: string } ) => {
+    const { confirmPassword, countryCode, phone, borndate, ...rest } = values;
+    const dto: RegisterDto = {
+      ...rest,
+      borndate: dayjs(borndate).toISOString(),
+      phone: `+${countryCode}${phone}`,
+    };
+    authService.register(dto);
   };
 
   return (
@@ -80,7 +89,7 @@ export default function RegisterForm() {
           <Col xs={24} md={12}>
             <Form.Item
               label="Nombre"
-              name="nombre"
+              name="firstnames"
               rules={[{ required: true, message: "Ingresa tu nombre" }]}
             >
               <Input placeholder="Digita tu nombre" size="large" />
@@ -89,7 +98,7 @@ export default function RegisterForm() {
           <Col xs={24} md={12}>
             <Form.Item
               label="Apellido"
-              name="apellido"
+              name="lastnames"
               rules={[{ required: true, message: "Ingresa tu apellido" }]}
             >
               <Input placeholder="Digita tu apellido" size="large" />
@@ -101,7 +110,7 @@ export default function RegisterForm() {
           <Col xs={24} md={12}>
             <Form.Item
               label="Sexo"
-              name="sexo"
+              name="sex"
               rules={[{ required: true, message: "Selecciona" }]}
             >
               <Select
@@ -115,11 +124,12 @@ export default function RegisterForm() {
           <Col xs={24} md={12}>
             <Form.Item
               label="Fecha de nacimiento"
-              name="fechaNacimiento"
+              name="borndate"
               rules={[{ required: true, message: "Selecciona la fecha" }]}
             >
               <DatePicker
-                placeholder="Seleccionar"
+                format="DD/MM/YYYY"
+                placeholder="DD/MM/AAAA"
                 size="large"
                 style={{ width: "100%" }}
               />

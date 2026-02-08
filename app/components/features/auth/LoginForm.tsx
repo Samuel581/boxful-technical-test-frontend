@@ -3,6 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import { Form, Input, Button, Typography, Space } from "antd";
+import type { LoginDto } from "@/app/types/auth";
+import { authService } from "@/app/services/authService";
 
 const { Title, Text } = Typography;
 
@@ -13,9 +15,10 @@ const formLayout = {
 export default function LoginForm() {
   const [form] = Form.useForm();
 
-  const onFinish = (values: { email: string; password: string }) => {
+  const onFinish = (values: LoginDto) => {
     console.log("Login values:", values);
-    // TODO: integrate auth
+    authService.login(values)
+    
   };
 
   return (
@@ -44,7 +47,10 @@ export default function LoginForm() {
         <Form.Item
           label="Correo electrónico"
           name="email"
-          rules={[{ required: true, message: "Ingresa tu correo electrónico" }]}
+          rules={[
+            { required: true, message: "Ingresa tu correo electrónico" },
+            { type: "email", message: "Correo electrónico no válido" },
+          ]}
         >
           <Input placeholder="Digita tu correo" size="large" />
         </Form.Item>
@@ -52,7 +58,10 @@ export default function LoginForm() {
         <Form.Item
           label="Contraseña"
           name="password"
-          rules={[{ required: true, message: "Ingresa tu contraseña" }]}
+          rules={[
+            { required: true, message: "Ingresa tu contraseña" },
+            { min: 8, message: "La contraseña debe tener al menos 8 caracteres" },
+          ]}
         >
           <Input.Password
             placeholder="Digita el NIT del comercio"
