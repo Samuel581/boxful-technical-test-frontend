@@ -1,9 +1,9 @@
-import React from 'react'
+import AuthPanelLayout from "@/components/layout/AuthPanelLayout";
 
-function layout() {
-  return (
-    <div>layout</div>
-  )
+export default function AuthLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <AuthPanelLayout>{children}</AuthPanelLayout>;
 }
-
-export default layout
