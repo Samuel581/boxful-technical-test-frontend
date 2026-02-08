@@ -1,9 +1,5 @@
-import React from 'react'
+import CreateOrderForm from "@/components/features/order/CreateOrderForm";
 
-function page() {
-  return (
-    <div>page</div>
-  )
+export default function CreateOrderPage() {
+  return <CreateOrderForm />;
 }
-
-export default page

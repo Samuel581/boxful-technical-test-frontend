@@ -1,9 +1,5 @@
-import React from 'react'
+import OrderHistory from "@/components/features/order/OrderHistory";
 
-function page() {
-  return (
-    <div>page</div>
-  )
+export default function HistoryPage() {
+  return <OrderHistory />;
 }
-
-export default page
