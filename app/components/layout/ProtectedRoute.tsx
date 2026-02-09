@@ -3,7 +3,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useReducer } from "react";
 import { Spin } from "antd";
-import { LOGIN } from "@/app/constants/backendRoutes";
+import { LOGIN } from "@/app/constants/frontendRoute";
 
 export default function ProtectedRoute({
     children,
