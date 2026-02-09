@@ -3,8 +3,9 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Layout } from "antd";
+import { Layout, Button } from "antd";
 import NavLinks from "@/app/components/features/order/NavLinks";
+import { useAuth } from "@/app/context/AuthContext";
 
 const { Sider, Header, Content } = Layout;
 
@@ -28,6 +29,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const pageTitle = getPageTitle(pathname);
+  const { logout } = useAuth();
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -94,14 +96,9 @@ export default function DashboardLayout({
           >
             {pageTitle}
           </span>
-          <span
-            style={{
-              fontSize: 14,
-              color: "#262626",
-            }}
-          >
-            Tu nombre
-          </span>
+          <Button type="text" onClick={logout} style={{ color: "#262626" }}>
+            Cerrar sesión
+          </Button>
         </Header>
         <Content
           style={{
