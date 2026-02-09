@@ -32,6 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const data = await authService.login(values);
         const jwt = data.access_token ?? data.token;
         localStorage.setItem(TOKEN_KEY, jwt);
+        setToken(jwt);
         router.push('/dashboard/create-order');
     };
 
