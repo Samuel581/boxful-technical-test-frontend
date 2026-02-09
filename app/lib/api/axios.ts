@@ -1,4 +1,4 @@
-import { LOGIN } from "@/app/constants/backendRoutes";
+import { LOGIN } from "@/app/constants/frontendRoute";
 import axios from "axios"
 
 export const api = axios.create({

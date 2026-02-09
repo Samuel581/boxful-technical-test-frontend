@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Form,
   Input,
@@ -13,6 +14,9 @@ import {
   Select,
   Space,
 } from "antd";
+import dayjs from "dayjs";
+import { CreateOrderDto, PackageDto } from "@/app/types/order";
+import { ordersSerivice } from "@/app/services/ordersService";
 
 const { Title, Text } = Typography;
 
@@ -26,49 +30,23 @@ const COUNTRY_CODE_OPTIONS = [
   { value: "1", label: "1" },
 ];
 
-export interface OrderProduct {
-  id: string;
-  largo: number;
-  alto: number;
-  ancho: number;
-  pesoLibras: number;
-  contenido: string;
-}
-
-export interface CreateOrderFormValues {
-  direccionRecoleccion: string;
-  fechaProgramada: unknown;
-  nombres: string;
-  apellidos: string;
-  correo: string;
-  countryCode: string;
-  telefono: string;
-  direccionDestinatario: string;
-  departamento: string;
-  municipio: string;
-  puntoReferencia: string;
-  indicaciones: string;
-}
-
 const PRIMARY_BUTTON_STYLE = {
   backgroundColor: "#4242B5",
   borderColor: "#4242B5",
 };
 
 function CreateOrderStep1({
-  form,
   onNext,
 }: {
-  form: ReturnType<typeof Form.useForm>[0];
   onNext: () => void;
 }) {
   return (
-    <Form form={form} layout="vertical" {...formLayout}>
+    <>
       <Row gutter={16}>
         <Col xs={24} md={16}>
           <Form.Item
             label="Dirección de recolección"
-            name="direccionRecoleccion"
+            name="recolectionAddress"
             rules={[{ required: true, message: "Ingresa la dirección" }]}
           >
             <Input
@@ -80,7 +58,7 @@ function CreateOrderStep1({
         <Col xs={24} md={8}>
           <Form.Item
             label="Fecha programada"
-            name="fechaProgramada"
+            name="programedDate"
             rules={[{ required: true, message: "Selecciona la fecha" }]}
           >
             <DatePicker
@@ -96,7 +74,7 @@ function CreateOrderStep1({
         <Col xs={24} md={8}>
           <Form.Item
             label="Nombres"
-            name="nombres"
+            name="recipientNames"
             rules={[{ required: true, message: "Ingresa los nombres" }]}
           >
             <Input placeholder="Gabriela Reneé" size="large" />
@@ -105,7 +83,7 @@ function CreateOrderStep1({
         <Col xs={24} md={8}>
           <Form.Item
             label="Apellidos"
-            name="apellidos"
+            name="recipientLastNames"
             rules={[{ required: true, message: "Ingresa los apellidos" }]}
           >
             <Input placeholder="Días López" size="large" />
@@ -114,7 +92,7 @@ function CreateOrderStep1({
         <Col xs={24} md={8}>
           <Form.Item
             label="Correo electrónico"
-            name="correo"
+            name="recipientEmail"
             rules={[
               { required: true, message: "Ingresa el correo" },
               { type: "email", message: "Correo no válido" },
@@ -137,7 +115,7 @@ function CreateOrderStep1({
                 />
               </Form.Item>
               <Form.Item
-                name="telefono"
+                name="recipientCellphone"
                 noStyle
                 rules={[{ required: true, message: "Ingresa el teléfono" }]}
               >
@@ -149,7 +127,7 @@ function CreateOrderStep1({
         <Col xs={24} md={16}>
           <Form.Item
             label="Dirección del destinatario"
-            name="direccionDestinatario"
+            name="destinationAddress"
             rules={[{ required: true, message: "Ingresa la dirección" }]}
           >
             <Input
@@ -164,7 +142,7 @@ function CreateOrderStep1({
         <Col xs={24} md={8}>
           <Form.Item
             label="Departamento"
-            name="departamento"
+            name="state"
             rules={[{ required: true, message: "Ingresa el departamento" }]}
           >
             <Input placeholder="San Salvador" size="large" />
@@ -173,7 +151,7 @@ function CreateOrderStep1({
         <Col xs={24} md={8}>
           <Form.Item
             label="Municipio"
-            name="municipio"
+            name="city"
             rules={[{ required: true, message: "Ingresa el municipio" }]}
           >
             <Input placeholder="San Salvador" size="large" />
@@ -182,7 +160,7 @@ function CreateOrderStep1({
         <Col xs={24} md={8}>
           <Form.Item
             label="Punto de referencia"
-            name="puntoReferencia"
+            name="referencePoint"
           >
             <Input
               placeholder="Cerca de redondel Arbol de la Paz"
@@ -194,7 +172,7 @@ function CreateOrderStep1({
 
       <Row gutter={16}>
         <Col span={24}>
-          <Form.Item label="Indicaciones" name="indicaciones">
+          <Form.Item label="Indicaciones" name="additionalInstructions">
             <Input.TextArea
               placeholder="Llamar antes de entregar"
               rows={3}
@@ -217,7 +195,7 @@ function CreateOrderStep1({
           </Button>
         </div>
       </Form.Item>
-    </Form>
+    </>
   );
 }
 
@@ -228,9 +206,9 @@ function CreateOrderStep2({
   onBack,
   onSubmit,
 }: {
-  products: OrderProduct[];
-  onAddProduct: (p: Omit<OrderProduct, "id">) => void;
-  onRemoveProduct: (id: string) => void;
+  products: PackageDto[];
+  onAddProduct: (p: PackageDto) => void;
+  onRemoveProduct: (index: number) => void;
   onBack: () => void;
   onSubmit: () => void;
 }) {
@@ -247,11 +225,11 @@ function CreateOrderStep2({
     const p = Number(pesoLibras);
     if (!l || !a || !w || !p || !contenido.trim()) return;
     onAddProduct({
-      largo: l,
-      alto: a,
-      ancho: w,
-      pesoLibras: p,
-      contenido: contenido.trim(),
+      length: l,
+      height: a,
+      width: w,
+      weight: p,
+      content: contenido.trim(),
     });
     setLargo("");
     setAlto("");
@@ -328,7 +306,7 @@ function CreateOrderStep2({
         <div style={{ marginBottom: 24 }}>
           {products.map((p, index) => (
             <div
-              key={p.id}
+              key={p.content}
               style={{
                 border: "2px solid #52c41a",
                 borderRadius: 8,
@@ -342,32 +320,32 @@ function CreateOrderStep2({
             >
               <Input
                 size="middle"
-                value={`${p.pesoLibras} libras`}
+                value={`${p.weight} libras`}
                 readOnly
                 style={{ width: 100 }}
               />
               <Input
                 size="middle"
-                value={p.contenido}
+                value={p.content}
                 readOnly
                 style={{ width: 180 }}
               />
               <span style={{ fontSize: 16, opacity: 0.7 }}>&#9641;</span>
               <Input
                 size="middle"
-                value={`${p.largo} cm`}
+                value={`${p.length} cm`}
                 readOnly
                 style={{ width: 80 }}
               />
               <Input
                 size="middle"
-                value={`${p.alto} cm`}
+                value={`${p.height} cm`}
                 readOnly
                 style={{ width: 80 }}
               />
               <Input
                 size="middle"
-                value={`${p.ancho} cm`}
+                value={`${p.width} cm`}
                 readOnly
                 style={{ width: 80 }}
               />
@@ -375,7 +353,7 @@ function CreateOrderStep2({
                 type="text"
                 danger
                 size="middle"
-                onClick={() => onRemoveProduct(p.id)}
+                onClick={() => onRemoveProduct(index)}
                 aria-label="Eliminar"
               >
                 &#128465;
@@ -415,8 +393,9 @@ function CreateOrderStep2({
 
 export default function CreateOrderForm() {
   const [form] = Form.useForm();
+  const router = useRouter();
   const [step, setStep] = useState(0);
-  const [products, setProducts] = useState<OrderProduct[]>([]);
+  const [products, setProducts] = useState<PackageDto[]>([]);
 
   const handleStep1Next = async () => {
     try {
@@ -427,25 +406,27 @@ export default function CreateOrderForm() {
     }
   };
 
-  const handleAddProduct = (p: Omit<OrderProduct, "id">) => {
-    setProducts((prev) => [
-      ...prev,
-      { ...p, id: `product-${Date.now()}-${Math.random().toString(36).slice(2)}` },
-    ]);
+  const handleAddProduct = (p: PackageDto) => {
+    setProducts((prev) => [...prev, p]);
   };
 
-  const handleRemoveProduct = (id: string) => {
-    setProducts((prev) => prev.filter((item) => item.id !== id));
+  const handleRemoveProduct = (index: number) => {
+    setProducts((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
-    const values = form.getFieldsValue();
-    const payload = {
-      ...values,
-      products,
+  const handleSubmit = async () => {
+    const { countryCode, recipientCellphone, programedDate, ...rest } = form.getFieldsValue();
+
+    const dto: CreateOrderDto = {
+      ...rest,
+      programedDate: dayjs(programedDate).toISOString(),
+      recipientCellphone: `+${countryCode}${recipientCellphone}`,
+      packages: products,
     };
-    console.log("Create order payload:", payload);
-    // TODO: call API
+    console.log("dto:", JSON.stringify(dto, null, 2));
+
+    await ordersSerivice.create(dto);
+    router.push("/dashboard/history");
   };
 
   return (
@@ -468,23 +449,23 @@ export default function CreateOrderForm() {
         }}
         styles={{ body: { padding: 24 } }}
       >
-        {step === 0 && (
-          <>
+        <Form form={form} layout="vertical" {...formLayout}>
+          <div style={{ display: step === 0 ? "block" : "none" }}>
             <Title level={5} style={{ marginBottom: 24, fontWeight: 600 }}>
               Completa los datos
             </Title>
-            <CreateOrderStep1 form={form} onNext={handleStep1Next} />
-          </>
-        )}
-        {step === 1 && (
-          <CreateOrderStep2
-            products={products}
-            onAddProduct={handleAddProduct}
-            onRemoveProduct={handleRemoveProduct}
-            onBack={() => setStep(0)}
-            onSubmit={handleSubmit}
-          />
-        )}
+            <CreateOrderStep1 onNext={handleStep1Next} />
+          </div>
+          {step === 1 && (
+            <CreateOrderStep2
+              products={products}
+              onAddProduct={handleAddProduct}
+              onRemoveProduct={handleRemoveProduct}
+              onBack={() => setStep(0)}
+              onSubmit={handleSubmit}
+            />
+          )}
+        </Form>
       </Card>
     </div>
   );
