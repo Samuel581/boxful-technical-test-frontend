@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Form, Input, Button, Typography, Space } from "antd";
 import type { LoginDto } from "@/app/types/auth";
 import { authService } from "@/app/services/authService";
+import { useAuth } from "@/app/context/AuthContext";
 
 const { Title, Text } = Typography;
 
@@ -14,11 +15,11 @@ const formLayout = {
 
 export default function LoginForm() {
   const [form] = Form.useForm();
+  const { login } = useAuth()
 
   const onFinish = (values: LoginDto) => {
     console.log("Login values:", values);
-    authService.login(values)
-    
+    login(values)
   };
 
   return (
