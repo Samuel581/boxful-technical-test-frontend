@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { Form, Input, Button, Typography, Space } from "antd";
+import { Form, Input, Button, Typography, Space, message } from "antd";
 import type { LoginDto } from "@/app/types/auth";
-import { authService } from "@/app/services/authService";
 import { useAuth } from "@/app/context/AuthContext";
 
 const { Title, Text } = Typography;
@@ -15,11 +14,19 @@ const formLayout = {
 
 export default function LoginForm() {
   const [form] = Form.useForm();
-  const { login } = useAuth()
+  const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = (values: LoginDto) => {
-    console.log("Login values:", values);
-    login(values)
+  const onFinish = async (values: LoginDto) => {
+    setLoading(true);
+    try {
+      await login(values);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || "Error al iniciar sesión";
+      message.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -76,6 +83,7 @@ export default function LoginForm() {
             htmlType="submit"
             size="large"
             block
+            loading={loading}
             style={{
               backgroundColor: "#4242B5",
               borderColor: "#4242B5",
