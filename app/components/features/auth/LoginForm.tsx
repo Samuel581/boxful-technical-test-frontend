@@ -7,12 +7,10 @@ import type { LoginDto } from "@/app/types/auth";
 import { useAuth } from "@/app/context/AuthContext";
 import { REGISTER } from "@/app/constants/frontendRoute";
 import { COLOR_PRIMARY } from "@/app/constants/colors";
+import { FORM_LAYOUT, PRIMARY_BUTTON_STYLE } from "@/app/constants/formConstants";
+import { emailRules, passwordRules } from "@/app/form-rules/commonRules";
 
 const { Title, Text } = Typography;
-
-const formLayout = {
-  wrapperCol: { span: 24 },
-};
 
 export default function LoginForm() {
   const [form] = Form.useForm();
@@ -52,15 +50,12 @@ export default function LoginForm() {
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        {...formLayout}
+        {...FORM_LAYOUT}
       >
         <Form.Item
           label="Correo electrónico"
           name="email"
-          rules={[
-            { required: true, message: "Ingresa tu correo electrónico" },
-            { type: "email", message: "Correo electrónico no válido" },
-          ]}
+          rules={emailRules}
         >
           <Input placeholder="Digita tu correo" size="large" />
         </Form.Item>
@@ -68,10 +63,7 @@ export default function LoginForm() {
         <Form.Item
           label="Contraseña"
           name="password"
-          rules={[
-            { required: true, message: "Ingresa tu contraseña" },
-            { min: 8, message: "La contraseña debe tener al menos 8 caracteres" },
-          ]}
+          rules={passwordRules}
         >
           <Input.Password
             placeholder="Digita el NIT del comercio"
@@ -86,11 +78,7 @@ export default function LoginForm() {
             size="large"
             block
             loading={loading}
-            style={{
-              backgroundColor: COLOR_PRIMARY,
-              borderColor: COLOR_PRIMARY,
-              height: 44,
-            }}
+            style={PRIMARY_BUTTON_STYLE}
           >
             Iniciar sesión
           </Button>

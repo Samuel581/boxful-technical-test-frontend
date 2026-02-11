@@ -4,6 +4,7 @@ import { authService } from "../services/authService"
 import { LoginDto } from "../types/auth"
 import { useRouter } from "next/navigation"
 import { DASHBOARD_CREATE_ORDER, LOGIN } from "../constants/frontendRoute"
+import { TOKEN_KEY } from "../constants/auth"
 interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
@@ -14,7 +15,6 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
-const TOKEN_KEY = "auth_token";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
