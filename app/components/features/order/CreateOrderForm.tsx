@@ -13,6 +13,7 @@ import {
   DatePicker,
   Select,
   Space,
+  message,
 } from "antd";
 import dayjs from "dayjs";
 import { CreateOrderDto, PackageDto } from "@/app/types/order";
@@ -192,12 +193,14 @@ function CreateOrderStep2({
   onRemoveProduct,
   onBack,
   onSubmit,
+  submitting,
 }: {
   products: PackageDto[];
   onAddProduct: (p: PackageDto) => void;
   onRemoveProduct: (index: number) => void;
   onBack: () => void;
   onSubmit: () => void;
+  submitting: boolean;
 }) {
   const [largo, setLargo] = useState("");
   const [alto, setAlto] = useState("");
@@ -369,6 +372,7 @@ function CreateOrderStep2({
           type="primary"
           size="large"
           onClick={onSubmit}
+          loading={submitting}
           style={PRIMARY_BUTTON_STYLE}
         >
           Enviar &rarr;
@@ -401,6 +405,8 @@ export default function CreateOrderForm() {
     setProducts((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const [submitting, setSubmitting] = useState(false);
+
   const handleSubmit = async () => {
     const { countryCode, recipientCellphone, programedDate, ...rest } = form.getFieldsValue();
 
@@ -410,10 +416,18 @@ export default function CreateOrderForm() {
       recipientCellphone: `+${countryCode}${recipientCellphone}`,
       packages: products,
     };
-    console.log("dto:", JSON.stringify(dto, null, 2));
 
-    await ordersSerivice.create(dto);
-    router.push(DASHBOARD_HISTORY);
+    setSubmitting(true);
+    try {
+      await ordersSerivice.create(dto);
+      message.success("Orden creada exitosamente");
+      router.push(DASHBOARD_HISTORY);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || "Error al crear la orden";
+      message.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -450,6 +464,7 @@ export default function CreateOrderForm() {
               onRemoveProduct={handleRemoveProduct}
               onBack={() => setStep(0)}
               onSubmit={handleSubmit}
+              submitting={submitting}
             />
           )}
         </Form>
