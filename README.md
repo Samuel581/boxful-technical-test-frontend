@@ -111,6 +111,34 @@ app/
 - CSV export of filtered orders
 - Items-per-page selector (5, 10, 20)
 
+## Docker
+
+### Prerequisites
+
+- Docker and Docker Compose
+
+### Build and run
+
+```bash
+docker network create boxful-network
+
+# In the backend repo
+docker compose up -d
+
+# In the frontend repo
+docker compose up -d
+```
+
+The frontend will be available at `http://localhost:8080` and the backend at `http://localhost:3000`.
+
+The `NEXT_PUBLIC_API_URL` build arg defaults to `http://localhost:3000`. Override it via a `.env` file:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3000
+```
+
+Both the frontend and the backend share the `boxful-network` Docker network so they can communicate when running side by side.
+
 ## API Integration
 
 The frontend communicates with a REST backend through two services:
