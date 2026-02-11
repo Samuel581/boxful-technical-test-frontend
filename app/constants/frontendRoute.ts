@@ -1,1 +1,5 @@
 export const LOGIN = '/login'
+export const REGISTER = '/register'
+export const DASHBOARD = '/dashboard'
+export const DASHBOARD_CREATE_ORDER = '/dashboard/create-order'
+export const DASHBOARD_HISTORY = '/dashboard/history'

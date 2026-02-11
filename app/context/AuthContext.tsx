@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react"
 import { authService } from "../services/authService"
 import { LoginDto } from "../types/auth"
 import { useRouter } from "next/navigation"
+import { DASHBOARD_CREATE_ORDER, LOGIN } from "../constants/frontendRoute"
 interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
@@ -37,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
             localStorage.setItem(TOKEN_KEY, jwt);
             setToken(jwt);
-            router.push('/dashboard/create-order');
+            router.push(DASHBOARD_CREATE_ORDER);
         } catch (error: any) {
             const message = error?.response?.data?.message || error.message || "Login failed";
             console.error("Login error:", message);
@@ -48,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const logout = () => {
         localStorage.removeItem(TOKEN_KEY);
         setToken(null);
-        router.push('/login');
+        router.push(LOGIN);
     }
 
     return (

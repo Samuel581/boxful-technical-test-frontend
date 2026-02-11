@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
+import { DASHBOARD_CREATE_ORDER, LOGIN } from "@/app/constants/frontendRoute";
 import { Spin } from "antd";
 
 export default function Home() {
@@ -12,9 +13,9 @@ export default function Home() {
   useEffect(() => {
     if (!loading) {
       if (isAuthenticated) {
-        router.replace("/dashboard/create-order");
+        router.replace(DASHBOARD_CREATE_ORDER);
       } else {
-        router.replace("/login");
+        router.replace(LOGIN);
       }
     }
   }, [loading, isAuthenticated, router]);
