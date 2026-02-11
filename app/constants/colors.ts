@@ -1,0 +1,13 @@
+export const COLOR_PRIMARY = "#4242B5";
+export const COLOR_BRAND_ORANGE = "#ff6b35";
+export const COLOR_PAGE_BG = "#f8f9fa";
+export const COLOR_SECTION_BG = "#fafafa";
+export const COLOR_SECONDARY_BG = "#f5f5f5";
+export const COLOR_SUCCESS = "#52c41a";
+export const COLOR_SUCCESS_BG = "#f6ffed";
+export const COLOR_HEADER_BG = "#F2EEE6";
+export const COLOR_TEXT_DARK = "#262626";
+export const COLOR_TEXT_SECONDARY = "#595959";
+export const COLOR_BORDER = "#f0f0f0";
+export const COLOR_BORDER_GRAY = "#d9d9d9";
+export const COLOR_PANEL_BG = "#d9d9d9";

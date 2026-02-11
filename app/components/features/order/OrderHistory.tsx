@@ -6,6 +6,7 @@ import type { TableColumnsType, TablePaginationConfig } from "antd";
 import type { Dayjs } from "dayjs";
 import { ordersSerivice } from "@/app/services/ordersService";
 import type { Order } from "@/app/types/order";
+import { COLOR_SECTION_BG, COLOR_SUCCESS, COLOR_SUCCESS_BG } from "@/app/constants/colors";
 
 const PAGE_SIZE_OPTIONS = ["5", "10", "20"];
 
@@ -102,8 +103,8 @@ export default function OrderHistory() {
             display: "inline-block",
             padding: "2px 8px",
             borderRadius: 4,
-            backgroundColor: "#f6ffed",
-            color: "#52c41a",
+            backgroundColor: COLOR_SUCCESS_BG,
+            color: COLOR_SUCCESS,
             fontWeight: 500,
           }}
         >
@@ -114,7 +115,7 @@ export default function OrderHistory() {
   ];
 
   return (
-    <div style={{ background: "#fafafa", padding: 24, borderRadius: 8 }}>
+    <div style={{ background: COLOR_SECTION_BG, padding: 24, borderRadius: 8 }}>
       <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
         <DatePicker.RangePicker
           value={dateRange}

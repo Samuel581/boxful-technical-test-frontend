@@ -17,6 +17,8 @@ import {
 import dayjs from "dayjs";
 import { CreateOrderDto, PackageDto } from "@/app/types/order";
 import { ordersSerivice } from "@/app/services/ordersService";
+import { DASHBOARD_HISTORY } from "@/app/constants/frontendRoute";
+import { COLOR_PRIMARY, COLOR_SECTION_BG, COLOR_SECONDARY_BG, COLOR_BORDER_GRAY, COLOR_SUCCESS, COLOR_TEXT_SECONDARY } from "@/app/constants/colors";
 
 const { Title, Text } = Typography;
 
@@ -31,8 +33,8 @@ const COUNTRY_CODE_OPTIONS = [
 ];
 
 const PRIMARY_BUTTON_STYLE = {
-  backgroundColor: "#4242B5",
-  borderColor: "#4242B5",
+  backgroundColor: COLOR_PRIMARY,
+  borderColor: COLOR_PRIMARY,
 };
 
 function CreateOrderStep1({
@@ -296,7 +298,7 @@ function CreateOrderStep2({
         <Button
           size="large"
           onClick={handleAdd}
-          style={{ background: "#f5f5f5", borderColor: "#d9d9d9" }}
+          style={{ background: COLOR_SECONDARY_BG, borderColor: COLOR_BORDER_GRAY }}
         >
           Agregar +
         </Button>
@@ -308,7 +310,7 @@ function CreateOrderStep2({
             <div
               key={p.content}
               style={{
-                border: "2px solid #52c41a",
+                border: `2px solid ${COLOR_SUCCESS}`,
                 borderRadius: 8,
                 padding: "12px 16px",
                 marginBottom: 12,
@@ -374,7 +376,7 @@ function CreateOrderStep2({
         <Button
           size="large"
           onClick={onBack}
-          style={{ background: "#f5f5f5", borderColor: "#d9d9d9", height: 44 }}
+          style={{ background: COLOR_SECONDARY_BG, borderColor: COLOR_BORDER_GRAY, height: 44 }}
         >
           &larr; Regresar
         </Button>
@@ -426,16 +428,16 @@ export default function CreateOrderForm() {
     console.log("dto:", JSON.stringify(dto, null, 2));
 
     await ordersSerivice.create(dto);
-    router.push("/dashboard/history");
+    router.push(DASHBOARD_HISTORY);
   };
 
   return (
-    <div style={{ background: "#fafafa", padding: "24px 0" }}>
+    <div style={{ background: COLOR_SECTION_BG, padding: "24px 0" }}>
       <Space direction="vertical" size={8} style={{ marginBottom: 24 }}>
         <Title level={2} style={{ margin: 0, fontWeight: 700 }}>
           Crea una orden
         </Title>
-        <Text style={{ fontSize: 14, color: "#595959" }}>
+        <Text style={{ fontSize: 14, color: COLOR_TEXT_SECONDARY }}>
           Dale una ventaja competitiva a tu negocio con entregas{" "}
           <strong>el mismo día</strong> (Área Metropolitana) y{" "}
           <strong>el día siguiente</strong> a nivel nacional.

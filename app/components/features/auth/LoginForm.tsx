@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Form, Input, Button, Typography, Space, message } from "antd";
 import type { LoginDto } from "@/app/types/auth";
 import { useAuth } from "@/app/context/AuthContext";
+import { REGISTER } from "@/app/constants/frontendRoute";
+import { COLOR_PRIMARY } from "@/app/constants/colors";
 
 const { Title, Text } = Typography;
 
@@ -85,8 +87,8 @@ export default function LoginForm() {
             block
             loading={loading}
             style={{
-              backgroundColor: "#4242B5",
-              borderColor: "#4242B5",
+              backgroundColor: COLOR_PRIMARY,
+              borderColor: COLOR_PRIMARY,
               height: 44,
             }}
           >
@@ -98,8 +100,8 @@ export default function LoginForm() {
       <div style={{ textAlign: "center", marginTop: 24 }}>
         <Text type="secondary">¿Necesitas una cuenta? </Text>
         <Link
-          href="/register"
-          style={{ color: "#4242B5", fontWeight: 600, fontSize: 14 }}
+          href={REGISTER}
+          style={{ color: COLOR_PRIMARY, fontWeight: 600, fontSize: 14 }}
         >
           Regístrate aquí
         </Link>

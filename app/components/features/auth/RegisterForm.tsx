@@ -17,6 +17,8 @@ import dayjs from "dayjs";
 import { Sex } from "@/app/types/auth";
 import type { RegisterDto } from "@/app/types/auth";
 import { authService } from "@/app/services/authService";
+import { LOGIN } from "@/app/constants/frontendRoute";
+import { COLOR_PRIMARY } from "@/app/constants/colors";
 
 const { Title, Text } = Typography;
 
@@ -61,7 +63,7 @@ export default function RegisterForm() {
     >
       <Space orientation="vertical" size={0} style={{ marginBottom: 24 }}>
         <Space align="center" size={12} style={{ marginBottom: 8 }}>
-          <Link href="/login">
+          <Link href={LOGIN}>
             <Button
               type="text"
               style={{ padding: 4, fontSize: 18 }}
@@ -218,8 +220,8 @@ export default function RegisterForm() {
             size="large"
             block
             style={{
-              backgroundColor: "#4242B5",
-              borderColor: "#4242B5",
+              backgroundColor: COLOR_PRIMARY,
+              borderColor: COLOR_PRIMARY,
               height: 44,
             }}
           >

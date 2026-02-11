@@ -5,10 +5,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button, Menu } from "antd";
 import { Plus, Search } from 'lucide-react'
+import { DASHBOARD_CREATE_ORDER, DASHBOARD_HISTORY } from "@/app/constants/frontendRoute";
 
 const links = [
-  { name: 'Crear orden', href: '/dashboard/create-order', icon: Plus },
-  { name: 'Historial', href: '/dashboard/history', icon: Search },
+  { name: 'Crear orden', href: DASHBOARD_CREATE_ORDER, icon: Plus },
+  { name: 'Historial', href: DASHBOARD_HISTORY, icon: Search },
 ]
 
 
