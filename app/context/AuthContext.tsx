@@ -29,11 +29,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [])
 
     const login = async (values: LoginDto) => {
-        const data = await authService.login(values);
-        const jwt = data.access_token ?? data.token;
-        localStorage.setItem(TOKEN_KEY, jwt);
-        setToken(jwt);
-        router.push('/dashboard/create-order');
+        try {
+            const data = await authService.login(values);
+            const jwt = data.accessToken ?? data.access_token ?? data.token;
+            if (!jwt) {
+                throw new Error("No token received from server");
+            }
+            localStorage.setItem(TOKEN_KEY, jwt);
+            setToken(jwt);
+            router.push('/dashboard/create-order');
+        } catch (error: any) {
+            const message = error?.response?.data?.message || error.message || "Login failed";
+            console.error("Login error:", message);
+            throw error;
+        }
     };
 
     const logout = () => {
