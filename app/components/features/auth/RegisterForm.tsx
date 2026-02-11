@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Form,
   Input,
@@ -12,6 +13,7 @@ import {
   Select,
   DatePicker,
   Space,
+  message,
 } from "antd";
 import dayjs from "dayjs";
 import { Sex } from "@/app/types/auth";
@@ -33,15 +35,27 @@ const GENDER_OPTIONS = [
 
 export default function RegisterForm() {
   const [form] = Form.useForm();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = (values: RegisterDto & { countryCode: string; confirmPassword: string } ) => {
+  const onFinish = async (values: RegisterDto & { countryCode: string; confirmPassword: string }) => {
     const { confirmPassword, countryCode, phone, borndate, ...rest } = values;
     const dto: RegisterDto = {
       ...rest,
       borndate: dayjs(borndate).toISOString(),
       phone: `+${countryCode}${phone}`,
     };
-    authService.register(dto);
+    setLoading(true);
+    try {
+      await authService.register(dto);
+      message.success("Registro exitoso. Inicia sesión para continuar.");
+      router.push(LOGIN);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || "Error al registrarse";
+      message.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -197,6 +211,7 @@ export default function RegisterForm() {
             htmlType="submit"
             size="large"
             block
+            loading={loading}
             style={PRIMARY_BUTTON_STYLE}
           >
             Siguiente

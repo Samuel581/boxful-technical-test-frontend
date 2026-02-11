@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { Table, DatePicker, Button, Space } from "antd";
+import { Table, DatePicker, Button, Space, message } from "antd";
 import type { TableColumnsType, TablePaginationConfig } from "antd";
 import type { Dayjs } from "dayjs";
 import { ordersSerivice } from "@/app/services/ordersService";
@@ -33,8 +33,9 @@ export default function OrderHistory() {
       });
       setOrders(response.data);
       setTotal(response.meta.total);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || "Error al cargar las órdenes";
+      message.error(msg);
     } finally {
       setLoading(false);
     }
