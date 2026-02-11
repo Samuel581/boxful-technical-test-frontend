@@ -1,7 +1,7 @@
 'use client'
 import { ORDERS_API } from "../constants/backendRoutes"
 import { api } from "../lib/api/axios"
-import { CreateOrderDto, Order } from "../types/order"
+import { CreateOrderDto, Order, OrdersQueryParams, PaginatedResponse } from "../types/order"
 
 export const ordersSerivice = {
 
@@ -10,8 +10,8 @@ export const ordersSerivice = {
         return response.data;
     },
 
-    async getAll(): Promise<Order[]> {
-        const response = await api.get(ORDERS_API);
+    async getAll(params?: OrdersQueryParams): Promise<PaginatedResponse<Order>> {
+        const response = await api.get(ORDERS_API, { params });
         return response.data;
     }
 }
