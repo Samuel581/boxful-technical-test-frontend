@@ -2,6 +2,8 @@
 
 A delivery order management application built with Next.js 16 and React 19. Allows users to register, log in, create package delivery orders, and track order history with filtering and CSV export.
 
+**Live build:** https://boxful-technical-test-frontend.vercel.app
+
 ## Tech Stack
 
 - **Next.js 16** (App Router) + **React 19** + **TypeScript 5**
@@ -25,7 +27,11 @@ pnpm install
 
 ### Environment Variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root (see `.env.example` for reference):
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_API_URL` | Base URL of the backend API | Yes |
 
 ```env
 NEXT_PUBLIC_API_URL=https://boxful-technical-test-backend.onrender.com/
@@ -117,11 +123,33 @@ app/
 
 - Docker and Docker Compose
 
-### Build and run
+### Network setup
+
+Both the frontend and the backend must share a Docker network called `boxful-network`. Create it once (you only need to run this command a single time):
 
 ```bash
 docker network create boxful-network
+```
 
+### Environment variable warning
+
+The Docker build reads `NEXT_PUBLIC_API_URL` from your `.env` file at build time. If your `.env` currently points to the live deployment URL (e.g. `https://boxful-technical-test-backend.onrender.com/`), the frontend container will try to reach the backend through the internet instead of the local Docker network, and **it will not work**.
+
+Before building, make sure your `.env` has the correct local URL:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3000
+```
+
+If you previously built the image with a different URL, you must rebuild with `--no-cache` so Docker picks up the new value:
+
+```bash
+docker compose build --no-cache
+```
+
+### Build and run
+
+```bash
 # In the backend repo
 docker compose up -d
 
@@ -130,14 +158,6 @@ docker compose up -d
 ```
 
 The frontend will be available at `http://localhost:8080` and the backend at `http://localhost:3000`.
-
-The `NEXT_PUBLIC_API_URL` build arg defaults to `http://localhost:3000`. Override it via a `.env` file:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3000
-```
-
-Both the frontend and the backend share the `boxful-network` Docker network so they can communicate when running side by side.
 
 ## API Integration
 
