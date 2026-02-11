@@ -19,25 +19,14 @@ import type { RegisterDto } from "@/app/types/auth";
 import { authService } from "@/app/services/authService";
 import { LOGIN } from "@/app/constants/frontendRoute";
 import { COLOR_PRIMARY } from "@/app/constants/colors";
+import { FORM_LAYOUT, COUNTRY_CODE_OPTIONS, PRIMARY_BUTTON_STYLE } from "@/app/constants/formConstants";
 
 const { Title, Text } = Typography;
-
-const formLayout = {
-  wrapperCol: { span: 24 },
-};
 
 const GENDER_OPTIONS = [
   { value: Sex.M, label: "Masculino" },
   { value: Sex.F, label: "Femenino" },
   { value: Sex.OTHER, label: "Otro" },
-];
-
-const COUNTRY_CODE_OPTIONS = [
-  { value: "503", label: "+503" },
-  { value: "52", label: "+52" },
-  { value: "57", label: "+57" },
-  { value: "54", label: "+54" },
-  { value: "1", label: "+1" },
 ];
 
 export default function RegisterForm() {
@@ -85,7 +74,7 @@ export default function RegisterForm() {
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        {...formLayout}
+        {...FORM_LAYOUT}
       >
         <Row gutter={16}>
           <Col xs={24} md={12}>
@@ -219,11 +208,7 @@ export default function RegisterForm() {
             htmlType="submit"
             size="large"
             block
-            style={{
-              backgroundColor: COLOR_PRIMARY,
-              borderColor: COLOR_PRIMARY,
-              height: 44,
-            }}
+            style={PRIMARY_BUTTON_STYLE}
           >
             Siguiente
           </Button>

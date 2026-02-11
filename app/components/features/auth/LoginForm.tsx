@@ -7,12 +7,9 @@ import type { LoginDto } from "@/app/types/auth";
 import { useAuth } from "@/app/context/AuthContext";
 import { REGISTER } from "@/app/constants/frontendRoute";
 import { COLOR_PRIMARY } from "@/app/constants/colors";
+import { FORM_LAYOUT, PRIMARY_BUTTON_STYLE } from "@/app/constants/formConstants";
 
 const { Title, Text } = Typography;
-
-const formLayout = {
-  wrapperCol: { span: 24 },
-};
 
 export default function LoginForm() {
   const [form] = Form.useForm();
@@ -52,7 +49,7 @@ export default function LoginForm() {
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        {...formLayout}
+        {...FORM_LAYOUT}
       >
         <Form.Item
           label="Correo electrónico"
@@ -86,11 +83,7 @@ export default function LoginForm() {
             size="large"
             block
             loading={loading}
-            style={{
-              backgroundColor: COLOR_PRIMARY,
-              borderColor: COLOR_PRIMARY,
-              height: 44,
-            }}
+            style={PRIMARY_BUTTON_STYLE}
           >
             Iniciar sesión
           </Button>

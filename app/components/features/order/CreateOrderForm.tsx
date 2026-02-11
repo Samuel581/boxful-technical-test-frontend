@@ -18,24 +18,10 @@ import dayjs from "dayjs";
 import { CreateOrderDto, PackageDto } from "@/app/types/order";
 import { ordersSerivice } from "@/app/services/ordersService";
 import { DASHBOARD_HISTORY } from "@/app/constants/frontendRoute";
-import { COLOR_PRIMARY, COLOR_SECTION_BG, COLOR_SECONDARY_BG, COLOR_BORDER_GRAY, COLOR_SUCCESS, COLOR_TEXT_SECONDARY } from "@/app/constants/colors";
+import { COLOR_SECTION_BG, COLOR_SECONDARY_BG, COLOR_BORDER_GRAY, COLOR_SUCCESS, COLOR_TEXT_SECONDARY } from "@/app/constants/colors";
+import { FORM_LAYOUT, COUNTRY_CODE_OPTIONS, PRIMARY_BUTTON_STYLE } from "@/app/constants/formConstants";
 
 const { Title, Text } = Typography;
-
-const formLayout = { wrapperCol: { span: 24 } };
-
-const COUNTRY_CODE_OPTIONS = [
-  { value: "503", label: "503" },
-  { value: "52", label: "52" },
-  { value: "57", label: "57" },
-  { value: "54", label: "54" },
-  { value: "1", label: "1" },
-];
-
-const PRIMARY_BUTTON_STYLE = {
-  backgroundColor: COLOR_PRIMARY,
-  borderColor: COLOR_PRIMARY,
-};
 
 function CreateOrderStep1({
   onNext,
@@ -191,7 +177,7 @@ function CreateOrderStep1({
             size="large"
             htmlType="button"
             onClick={onNext}
-            style={{ ...PRIMARY_BUTTON_STYLE, height: 44 }}
+            style={PRIMARY_BUTTON_STYLE}
           >
             Siguiente &rarr;
           </Button>
@@ -384,7 +370,7 @@ function CreateOrderStep2({
           type="primary"
           size="large"
           onClick={onSubmit}
-          style={{ ...PRIMARY_BUTTON_STYLE, height: 44 }}
+          style={PRIMARY_BUTTON_STYLE}
         >
           Enviar &rarr;
         </Button>
@@ -451,7 +437,7 @@ export default function CreateOrderForm() {
         }}
         styles={{ body: { padding: 24 } }}
       >
-        <Form form={form} layout="vertical" {...formLayout}>
+        <Form form={form} layout="vertical" {...FORM_LAYOUT}>
           <div style={{ display: step === 0 ? "block" : "none" }}>
             <Title level={5} style={{ marginBottom: 24, fontWeight: 600 }}>
               Completa los datos
