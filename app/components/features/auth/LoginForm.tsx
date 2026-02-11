@@ -1,25 +1,32 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { Form, Input, Button, Typography, Space } from "antd";
+import { Form, Input, Button, Typography, Space, message } from "antd";
 import type { LoginDto } from "@/app/types/auth";
-import { authService } from "@/app/services/authService";
 import { useAuth } from "@/app/context/AuthContext";
+import { REGISTER } from "@/app/constants/frontendRoute";
+import { COLOR_PRIMARY } from "@/app/constants/colors";
+import { FORM_LAYOUT, PRIMARY_BUTTON_STYLE } from "@/app/constants/formConstants";
+import { emailRules, passwordRules } from "@/app/form-rules/commonRules";
 
 const { Title, Text } = Typography;
 
-const formLayout = {
-  wrapperCol: { span: 24 },
-};
-
 export default function LoginForm() {
   const [form] = Form.useForm();
-  const { login } = useAuth()
+  const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = (values: LoginDto) => {
-    console.log("Login values:", values);
-    login(values)
+  const onFinish = async (values: LoginDto) => {
+    setLoading(true);
+    try {
+      await login(values);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || "Error al iniciar sesión";
+      message.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,15 +50,12 @@ export default function LoginForm() {
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        {...formLayout}
+        {...FORM_LAYOUT}
       >
         <Form.Item
           label="Correo electrónico"
           name="email"
-          rules={[
-            { required: true, message: "Ingresa tu correo electrónico" },
-            { type: "email", message: "Correo electrónico no válido" },
-          ]}
+          rules={emailRules}
         >
           <Input placeholder="Digita tu correo" size="large" />
         </Form.Item>
@@ -59,10 +63,7 @@ export default function LoginForm() {
         <Form.Item
           label="Contraseña"
           name="password"
-          rules={[
-            { required: true, message: "Ingresa tu contraseña" },
-            { min: 8, message: "La contraseña debe tener al menos 8 caracteres" },
-          ]}
+          rules={passwordRules}
         >
           <Input.Password
             placeholder="Digita el NIT del comercio"
@@ -76,11 +77,8 @@ export default function LoginForm() {
             htmlType="submit"
             size="large"
             block
-            style={{
-              backgroundColor: "#4242B5",
-              borderColor: "#4242B5",
-              height: 44,
-            }}
+            loading={loading}
+            style={PRIMARY_BUTTON_STYLE}
           >
             Iniciar sesión
           </Button>
@@ -90,8 +88,8 @@ export default function LoginForm() {
       <div style={{ textAlign: "center", marginTop: 24 }}>
         <Text type="secondary">¿Necesitas una cuenta? </Text>
         <Link
-          href="/register"
-          style={{ color: "#4242B5", fontWeight: 600, fontSize: 14 }}
+          href={REGISTER}
+          style={{ color: COLOR_PRIMARY, fontWeight: 600, fontSize: 14 }}
         >
           Regístrate aquí
         </Link>

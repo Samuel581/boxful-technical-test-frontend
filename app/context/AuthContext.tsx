@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState, useEffect } from "react"
 import { authService } from "../services/authService"
 import { LoginDto } from "../types/auth"
 import { useRouter } from "next/navigation"
+import { DASHBOARD_CREATE_ORDER, LOGIN } from "../constants/frontendRoute"
+import { TOKEN_KEY } from "../constants/auth"
 interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
@@ -13,7 +15,6 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
-const TOKEN_KEY = "auth_token";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
@@ -29,17 +30,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [])
 
     const login = async (values: LoginDto) => {
-        const data = await authService.login(values);
-        const jwt = data.access_token ?? data.token;
-        localStorage.setItem(TOKEN_KEY, jwt);
-        setToken(jwt);
-        router.push('/dashboard/create-order');
+        try {
+            const data = await authService.login(values);
+            const jwt = data.accessToken ?? data.access_token ?? data.token;
+            if (!jwt) {
+                throw new Error("No token received from server");
+            }
+            localStorage.setItem(TOKEN_KEY, jwt);
+            setToken(jwt);
+            router.push(DASHBOARD_CREATE_ORDER);
+        } catch (error: any) {
+            const message = error?.response?.data?.message || error.message || "Login failed";
+            console.error("Login error:", message);
+            throw error;
+        }
     };
 
     const logout = () => {
         localStorage.removeItem(TOKEN_KEY);
         setToken(null);
-        router.push('/login');
+        router.push(LOGIN);
     }
 
     return (

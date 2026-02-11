@@ -13,27 +13,18 @@ import {
   DatePicker,
   Select,
   Space,
+  message,
 } from "antd";
 import dayjs from "dayjs";
 import { CreateOrderDto, PackageDto } from "@/app/types/order";
 import { ordersSerivice } from "@/app/services/ordersService";
+import { DASHBOARD_HISTORY } from "@/app/constants/frontendRoute";
+import { COLOR_SECTION_BG, COLOR_SECONDARY_BG, COLOR_BORDER_GRAY, COLOR_SUCCESS, COLOR_TEXT_SECONDARY } from "@/app/constants/colors";
+import { FORM_LAYOUT, COUNTRY_CODE_OPTIONS, PRIMARY_BUTTON_STYLE } from "@/app/constants/formConstants";
+import { dateRules } from "@/app/form-rules/commonRules";
+import { recipientNameRules, recipientLastNameRules, recipientEmailRules, recipientPhoneRules, recolectionAddressRules, destinationAddressRules, stateRules, cityRules } from "@/app/form-rules/createOrderRules";
 
 const { Title, Text } = Typography;
-
-const formLayout = { wrapperCol: { span: 24 } };
-
-const COUNTRY_CODE_OPTIONS = [
-  { value: "503", label: "503" },
-  { value: "52", label: "52" },
-  { value: "57", label: "57" },
-  { value: "54", label: "54" },
-  { value: "1", label: "1" },
-];
-
-const PRIMARY_BUTTON_STYLE = {
-  backgroundColor: "#4242B5",
-  borderColor: "#4242B5",
-};
 
 function CreateOrderStep1({
   onNext,
@@ -47,7 +38,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Dirección de recolección"
             name="recolectionAddress"
-            rules={[{ required: true, message: "Ingresa la dirección" }]}
+            rules={recolectionAddressRules}
           >
             <Input
               placeholder="Colonia Las Magnolias, calle militar 1, San Salvador"
@@ -59,12 +50,13 @@ function CreateOrderStep1({
           <Form.Item
             label="Fecha programada"
             name="programedDate"
-            rules={[{ required: true, message: "Selecciona la fecha" }]}
+            rules={dateRules}
           >
             <DatePicker
               placeholder="Seleccionar"
               size="large"
               style={{ width: "100%" }}
+              minDate={dayjs()}
             />
           </Form.Item>
         </Col>
@@ -75,7 +67,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Nombres"
             name="recipientNames"
-            rules={[{ required: true, message: "Ingresa los nombres" }]}
+            rules={recipientNameRules}
           >
             <Input placeholder="Gabriela Reneé" size="large" />
           </Form.Item>
@@ -84,7 +76,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Apellidos"
             name="recipientLastNames"
-            rules={[{ required: true, message: "Ingresa los apellidos" }]}
+            rules={recipientLastNameRules}
           >
             <Input placeholder="Días López" size="large" />
           </Form.Item>
@@ -93,10 +85,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Correo electrónico"
             name="recipientEmail"
-            rules={[
-              { required: true, message: "Ingresa el correo" },
-              { type: "email", message: "Correo no válido" },
-            ]}
+            rules={recipientEmailRules}
           >
             <Input placeholder="gabbydiaz@gmail.com" size="large" />
           </Form.Item>
@@ -117,7 +106,7 @@ function CreateOrderStep1({
               <Form.Item
                 name="recipientCellphone"
                 noStyle
-                rules={[{ required: true, message: "Ingresa el teléfono" }]}
+                rules={recipientPhoneRules}
               >
                 <Input placeholder="7777 7777" size="large" style={{ flex: 1 }} />
               </Form.Item>
@@ -128,7 +117,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Dirección del destinatario"
             name="destinationAddress"
-            rules={[{ required: true, message: "Ingresa la dirección" }]}
+            rules={destinationAddressRules}
           >
             <Input
               placeholder="Final 49 Av. Sur y Bulevar Los Próceres, Smartcenter, Bodega #8, San Salvador"
@@ -143,7 +132,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Departamento"
             name="state"
-            rules={[{ required: true, message: "Ingresa el departamento" }]}
+            rules={stateRules}
           >
             <Input placeholder="San Salvador" size="large" />
           </Form.Item>
@@ -152,7 +141,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Municipio"
             name="city"
-            rules={[{ required: true, message: "Ingresa el municipio" }]}
+            rules={cityRules}
           >
             <Input placeholder="San Salvador" size="large" />
           </Form.Item>
@@ -189,7 +178,7 @@ function CreateOrderStep1({
             size="large"
             htmlType="button"
             onClick={onNext}
-            style={{ ...PRIMARY_BUTTON_STYLE, height: 44 }}
+            style={PRIMARY_BUTTON_STYLE}
           >
             Siguiente &rarr;
           </Button>
@@ -205,12 +194,14 @@ function CreateOrderStep2({
   onRemoveProduct,
   onBack,
   onSubmit,
+  submitting,
 }: {
   products: PackageDto[];
   onAddProduct: (p: PackageDto) => void;
   onRemoveProduct: (index: number) => void;
   onBack: () => void;
   onSubmit: () => void;
+  submitting: boolean;
 }) {
   const [largo, setLargo] = useState("");
   const [alto, setAlto] = useState("");
@@ -296,7 +287,7 @@ function CreateOrderStep2({
         <Button
           size="large"
           onClick={handleAdd}
-          style={{ background: "#f5f5f5", borderColor: "#d9d9d9" }}
+          style={{ background: COLOR_SECONDARY_BG, borderColor: COLOR_BORDER_GRAY }}
         >
           Agregar +
         </Button>
@@ -308,7 +299,7 @@ function CreateOrderStep2({
             <div
               key={p.content}
               style={{
-                border: "2px solid #52c41a",
+                border: `2px solid ${COLOR_SUCCESS}`,
                 borderRadius: 8,
                 padding: "12px 16px",
                 marginBottom: 12,
@@ -374,7 +365,7 @@ function CreateOrderStep2({
         <Button
           size="large"
           onClick={onBack}
-          style={{ background: "#f5f5f5", borderColor: "#d9d9d9", height: 44 }}
+          style={{ background: COLOR_SECONDARY_BG, borderColor: COLOR_BORDER_GRAY, height: 44 }}
         >
           &larr; Regresar
         </Button>
@@ -382,7 +373,8 @@ function CreateOrderStep2({
           type="primary"
           size="large"
           onClick={onSubmit}
-          style={{ ...PRIMARY_BUTTON_STYLE, height: 44 }}
+          loading={submitting}
+          style={PRIMARY_BUTTON_STYLE}
         >
           Enviar &rarr;
         </Button>
@@ -414,6 +406,8 @@ export default function CreateOrderForm() {
     setProducts((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const [submitting, setSubmitting] = useState(false);
+
   const handleSubmit = async () => {
     const { countryCode, recipientCellphone, programedDate, ...rest } = form.getFieldsValue();
 
@@ -423,19 +417,27 @@ export default function CreateOrderForm() {
       recipientCellphone: `+${countryCode}${recipientCellphone}`,
       packages: products,
     };
-    console.log("dto:", JSON.stringify(dto, null, 2));
 
-    await ordersSerivice.create(dto);
-    router.push("/dashboard/history");
+    setSubmitting(true);
+    try {
+      await ordersSerivice.create(dto);
+      message.success("Orden creada exitosamente");
+      router.push(DASHBOARD_HISTORY);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || "Error al crear la orden";
+      message.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div style={{ background: "#fafafa", padding: "24px 0" }}>
+    <div style={{ background: COLOR_SECTION_BG, padding: "24px 0" }}>
       <Space direction="vertical" size={8} style={{ marginBottom: 24 }}>
         <Title level={2} style={{ margin: 0, fontWeight: 700 }}>
           Crea una orden
         </Title>
-        <Text style={{ fontSize: 14, color: "#595959" }}>
+        <Text style={{ fontSize: 14, color: COLOR_TEXT_SECONDARY }}>
           Dale una ventaja competitiva a tu negocio con entregas{" "}
           <strong>el mismo día</strong> (Área Metropolitana) y{" "}
           <strong>el día siguiente</strong> a nivel nacional.
@@ -449,7 +451,7 @@ export default function CreateOrderForm() {
         }}
         styles={{ body: { padding: 24 } }}
       >
-        <Form form={form} layout="vertical" {...formLayout}>
+        <Form form={form} layout="vertical" {...FORM_LAYOUT}>
           <div style={{ display: step === 0 ? "block" : "none" }}>
             <Title level={5} style={{ marginBottom: 24, fontWeight: 600 }}>
               Completa los datos
@@ -463,6 +465,7 @@ export default function CreateOrderForm() {
               onRemoveProduct={handleRemoveProduct}
               onBack={() => setStep(0)}
               onSubmit={handleSubmit}
+              submitting={submitting}
             />
           )}
         </Form>

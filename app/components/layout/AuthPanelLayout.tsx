@@ -1,5 +1,6 @@
 import React from "react";
 import { Col, Row } from "antd";
+import { COLOR_PANEL_BG } from "@/app/constants/colors";
 
 export default function AuthPanelLayout({
   children,
@@ -24,7 +25,7 @@ export default function AuthPanelLayout({
         xs={0}
         md={12}
         style={{
-          backgroundColor: "#d9d9d9",
+          backgroundColor: COLOR_PANEL_BG,
           minHeight: "100vh",
         }}
       />

@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Form,
   Input,
@@ -12,17 +13,19 @@ import {
   Select,
   DatePicker,
   Space,
+  message,
 } from "antd";
 import dayjs from "dayjs";
 import { Sex } from "@/app/types/auth";
 import type { RegisterDto } from "@/app/types/auth";
 import { authService } from "@/app/services/authService";
+import { LOGIN } from "@/app/constants/frontendRoute";
+import { COLOR_PRIMARY } from "@/app/constants/colors";
+import { FORM_LAYOUT, COUNTRY_CODE_OPTIONS, PRIMARY_BUTTON_STYLE } from "@/app/constants/formConstants";
+import { emailRules, passwordRules, phoneRules, dateRules } from "@/app/form-rules/commonRules";
+import { firstNameRules, lastNameRules, sexRules, confirmPasswordRules } from "@/app/form-rules/registerRules";
 
 const { Title, Text } = Typography;
-
-const formLayout = {
-  wrapperCol: { span: 24 },
-};
 
 const GENDER_OPTIONS = [
   { value: Sex.M, label: "Masculino" },
@@ -30,25 +33,29 @@ const GENDER_OPTIONS = [
   { value: Sex.OTHER, label: "Otro" },
 ];
 
-const COUNTRY_CODE_OPTIONS = [
-  { value: "503", label: "+503" },
-  { value: "52", label: "+52" },
-  { value: "57", label: "+57" },
-  { value: "54", label: "+54" },
-  { value: "1", label: "+1" },
-];
-
 export default function RegisterForm() {
   const [form] = Form.useForm();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = (values: RegisterDto & { countryCode: string; confirmPassword: string } ) => {
+  const onFinish = async (values: RegisterDto & { countryCode: string; confirmPassword: string }) => {
     const { confirmPassword, countryCode, phone, borndate, ...rest } = values;
     const dto: RegisterDto = {
       ...rest,
       borndate: dayjs(borndate).toISOString(),
       phone: `+${countryCode}${phone}`,
     };
-    authService.register(dto);
+    setLoading(true);
+    try {
+      await authService.register(dto);
+      message.success("Registro exitoso. Inicia sesión para continuar.");
+      router.push(LOGIN);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || "Error al registrarse";
+      message.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,7 +68,7 @@ export default function RegisterForm() {
     >
       <Space orientation="vertical" size={0} style={{ marginBottom: 24 }}>
         <Space align="center" size={12} style={{ marginBottom: 8 }}>
-          <Link href="/login">
+          <Link href={LOGIN}>
             <Button
               type="text"
               style={{ padding: 4, fontSize: 18 }}
@@ -83,14 +90,14 @@ export default function RegisterForm() {
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        {...formLayout}
+        {...FORM_LAYOUT}
       >
         <Row gutter={16}>
           <Col xs={24} md={12}>
             <Form.Item
               label="Nombre"
               name="firstnames"
-              rules={[{ required: true, message: "Ingresa tu nombre" }]}
+              rules={firstNameRules}
             >
               <Input placeholder="Digita tu nombre" size="large" />
             </Form.Item>
@@ -99,7 +106,7 @@ export default function RegisterForm() {
             <Form.Item
               label="Apellido"
               name="lastnames"
-              rules={[{ required: true, message: "Ingresa tu apellido" }]}
+              rules={lastNameRules}
             >
               <Input placeholder="Digita tu apellido" size="large" />
             </Form.Item>
@@ -111,7 +118,7 @@ export default function RegisterForm() {
             <Form.Item
               label="Sexo"
               name="sex"
-              rules={[{ required: true, message: "Selecciona" }]}
+              rules={sexRules}
             >
               <Select
                 placeholder="Seleccionar"
@@ -125,7 +132,7 @@ export default function RegisterForm() {
             <Form.Item
               label="Fecha de nacimiento"
               name="borndate"
-              rules={[{ required: true, message: "Selecciona la fecha" }]}
+              rules={dateRules}
             >
               <DatePicker
                 format="DD/MM/YYYY"
@@ -142,10 +149,7 @@ export default function RegisterForm() {
             <Form.Item
               label="Correo electrónico"
               name="email"
-              rules={[
-                { required: true, message: "Ingresa tu correo" },
-                { type: "email", message: "Correo no válido" },
-              ]}
+              rules={emailRules}
             >
               <Input placeholder="Digitar correo" size="large" />
             </Form.Item>
@@ -164,7 +168,7 @@ export default function RegisterForm() {
                 <Form.Item
                   name="phone"
                   noStyle
-                  rules={[{ required: true, message: "Ingresa el número" }]}
+                  rules={phoneRules}
                 >
                   <Input placeholder="7777 7777" size="large" style={{ flex: 1 }} />
                 </Form.Item>
@@ -178,7 +182,7 @@ export default function RegisterForm() {
             <Form.Item
               label="Contraseña"
               name="password"
-              rules={[{ required: true, message: "Digita tu contraseña" }]}
+              rules={passwordRules}
             >
               <Input.Password
                 placeholder="Digitar contraseña"
@@ -191,17 +195,7 @@ export default function RegisterForm() {
               label="Repetir contraseña"
               name="confirmPassword"
               dependencies={["password"]}
-              rules={[
-                { required: true, message: "Repite la contraseña" },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error("Las contraseñas no coinciden"));
-                  },
-                }),
-              ]}
+              rules={confirmPasswordRules}
             >
               <Input.Password
                 placeholder="Digitar contraseña"
@@ -217,11 +211,8 @@ export default function RegisterForm() {
             htmlType="submit"
             size="large"
             block
-            style={{
-              backgroundColor: "#4242B5",
-              borderColor: "#4242B5",
-              height: 44,
-            }}
+            loading={loading}
+            style={PRIMARY_BUTTON_STYLE}
           >
             Siguiente
           </Button>
