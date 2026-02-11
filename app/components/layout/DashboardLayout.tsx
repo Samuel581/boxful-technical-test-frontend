@@ -53,14 +53,6 @@ export default function DashboardLayout({
               gap: 8,
             }}
           >
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                backgroundColor: COLOR_BRAND_ORANGE,
-                borderRadius: 6,
-              }}
-            />
             <span
               style={{
                 color: COLOR_BRAND_ORANGE,
