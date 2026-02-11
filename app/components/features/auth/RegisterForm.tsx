@@ -14,7 +14,9 @@ import {
   DatePicker,
   Space,
   message,
+  Modal,
 } from "antd";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { Sex } from "@/app/types/auth";
 import type { RegisterDto } from "@/app/types/auth";
@@ -37,14 +39,19 @@ export default function RegisterForm() {
   const [form] = Form.useForm();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [confirmPhoneOpen, setConfirmPhoneOpen] = useState(false);
+  const [pendingValues, setPendingValues] = useState<
+    (RegisterDto & { countryCode: string; confirmPassword: string }) | null
+  >(null);
 
-  const onFinish = async (values: RegisterDto & { countryCode: string; confirmPassword: string }) => {
+  const handleRegister = async (values: RegisterDto & { countryCode: string; confirmPassword: string }) => {
     const { confirmPassword, countryCode, phone, borndate, ...rest } = values;
     const dto: RegisterDto = {
       ...rest,
       borndate: dayjs(borndate).toISOString(),
       phone: `+${countryCode}${phone}`,
     };
+
     setLoading(true);
     try {
       await authService.register(dto);
@@ -57,6 +64,30 @@ export default function RegisterForm() {
       setLoading(false);
     }
   };
+
+  const onFinish = (values: RegisterDto & { countryCode: string; confirmPassword: string }) => {
+    setPendingValues(values);
+    setConfirmPhoneOpen(true);
+  };
+
+  const handleCancelConfirm = () => {
+    setConfirmPhoneOpen(false);
+    setPendingValues(null);
+  };
+
+  const handleConfirmPhone = async () => {
+    if (!pendingValues) return;
+    setConfirmPhoneOpen(false);
+    await handleRegister(pendingValues);
+    setPendingValues(null);
+  };
+
+  const formattedPhone = React.useMemo(() => {
+    if (!pendingValues) return "";
+    const countryCode = pendingValues.countryCode || "";
+    const phone = pendingValues.phone || "";
+    return `+${countryCode} ${phone}`;
+  }, [pendingValues]);
 
   return (
     <div
@@ -218,6 +249,44 @@ export default function RegisterForm() {
           </Button>
         </Form.Item>
       </Form>
+      <Modal
+        open={confirmPhoneOpen}
+        onCancel={handleCancelConfirm}
+        footer={null}
+        centered
+        closable
+      >
+        <Space
+          direction="vertical"
+          size={24}
+          style={{ width: "100%", alignItems: "center", textAlign: "center" }}
+        >
+          <ExclamationCircleFilled style={{ fontSize: 48, color: COLOR_PRIMARY }} />
+          <Space direction="vertical" size={8}>
+            <Title level={4} style={{ margin: 0 }}>
+              Confirmar número de teléfono
+            </Title>
+            <Text type="secondary">
+              Está seguro de que desea continuar con el número{" "}
+              <Text strong>{formattedPhone}</Text>?
+            </Text>
+          </Space>
+          <Space size={12}>
+            <Button size="large" onClick={handleCancelConfirm}>
+              Cancelar
+            </Button>
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleConfirmPhone}
+              loading={loading}
+              style={PRIMARY_BUTTON_STYLE}
+            >
+              Aceptar
+            </Button>
+          </Space>
+        </Space>
+      </Modal>
     </div>
   );
 }
