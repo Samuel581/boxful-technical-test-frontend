@@ -31,6 +31,23 @@ export enum OrderStatus {
   PENDING = "PENDING",
 }
 
+export interface OrdersQueryParams {
+  page?: number;
+  limit?: number;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 export interface Order {
   id: string;
   userId: string;
