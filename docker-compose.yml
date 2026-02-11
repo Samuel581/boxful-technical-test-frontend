@@ -1,0 +1,17 @@
+services:
+  frontend:
+    container_name: boxful-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000}
+    ports:
+      - "8080:8080"
+    networks:
+      - boxful-network
+    restart: unless-stopped
+
+networks:
+  boxful-network:
+    external: true
