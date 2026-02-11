@@ -7,6 +7,8 @@ import type { Dayjs } from "dayjs";
 import { ordersSerivice } from "@/app/services/ordersService";
 import type { Order } from "@/app/types/order";
 import { COLOR_SECTION_BG, COLOR_SUCCESS, COLOR_SUCCESS_BG } from "@/app/constants/colors";
+import { Download } from "lucide-react";
+import { ordersToCsv, downloadCsv } from "@/app/utils/exportOrders";
 
 const PAGE_SIZE_OPTIONS = ["5", "10", "20"];
 
@@ -53,6 +55,31 @@ export default function OrderHistory() {
   const handleClearFilters = () => {
     setPage(1);
     setDateRange(null);
+  };
+
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportCsv = async () => {
+    setExporting(true);
+    try {
+      const allOrders = await ordersSerivice.getAllForExport({
+        startDate: dateRange?.[0]?.startOf("day").toISOString(),
+        endDate: dateRange?.[1]?.endOf("day").toISOString(),
+      });
+      if (allOrders.length === 0) {
+        message.warning("No hay órdenes para exportar");
+        return;
+      }
+      const csv = ordersToCsv(allOrders);
+      const dateSuffix = new Date().toISOString().slice(0, 10);
+      downloadCsv(csv, `ordenes_${dateSuffix}.csv`);
+      message.success(`${allOrders.length} órdenes exportadas`);
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || "Error al exportar las órdenes";
+      message.error(msg);
+    } finally {
+      setExporting(false);
+    }
   };
 
   const handleTableChange = (pagination: TablePaginationConfig) => {
@@ -130,6 +157,14 @@ export default function OrderHistory() {
             Limpiar filtro
           </Button>
         )}
+        <Button
+          size="middle"
+          icon={<Download size={16} />}
+          loading={exporting}
+          onClick={handleExportCsv}
+        >
+          Descargar CSV
+        </Button>
       </div>
       <Table
         columns={columns}
