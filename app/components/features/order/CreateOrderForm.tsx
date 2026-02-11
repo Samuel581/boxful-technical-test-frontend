@@ -56,6 +56,7 @@ function CreateOrderStep1({
               placeholder="Seleccionar"
               size="large"
               style={{ width: "100%" }}
+              minDate={dayjs()}
             />
           </Form.Item>
         </Col>
