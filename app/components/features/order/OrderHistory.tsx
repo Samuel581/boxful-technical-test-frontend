@@ -13,8 +13,8 @@ export default function OrderHistory() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const data = await ordersSerivice.getAll();
-        setOrders(data);
+        const response = await ordersSerivice.getAll();
+        setOrders(response.data);
       } catch (error) {
         console.error("Error fetching orders:", error);
       } finally {

@@ -10,7 +10,7 @@ export const ordersSerivice = {
         return response.data;
     },
 
-    async getAll(): Promise<Order[]> {
+    async getAll(): Promise<{ data: Order[]; meta: { total: number; page: number; limit: number; totalPages: number } }> {
         const response = await api.get(ORDERS_API);
         return response.data;
     }
