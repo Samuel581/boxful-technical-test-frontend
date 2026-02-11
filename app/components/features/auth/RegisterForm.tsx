@@ -20,6 +20,8 @@ import { authService } from "@/app/services/authService";
 import { LOGIN } from "@/app/constants/frontendRoute";
 import { COLOR_PRIMARY } from "@/app/constants/colors";
 import { FORM_LAYOUT, COUNTRY_CODE_OPTIONS, PRIMARY_BUTTON_STYLE } from "@/app/constants/formConstants";
+import { emailRules, passwordRules, phoneRules, dateRules } from "@/app/form-rules/commonRules";
+import { firstNameRules, lastNameRules, sexRules, confirmPasswordRules } from "@/app/form-rules/registerRules";
 
 const { Title, Text } = Typography;
 
@@ -81,7 +83,7 @@ export default function RegisterForm() {
             <Form.Item
               label="Nombre"
               name="firstnames"
-              rules={[{ required: true, message: "Ingresa tu nombre" }]}
+              rules={firstNameRules}
             >
               <Input placeholder="Digita tu nombre" size="large" />
             </Form.Item>
@@ -90,7 +92,7 @@ export default function RegisterForm() {
             <Form.Item
               label="Apellido"
               name="lastnames"
-              rules={[{ required: true, message: "Ingresa tu apellido" }]}
+              rules={lastNameRules}
             >
               <Input placeholder="Digita tu apellido" size="large" />
             </Form.Item>
@@ -102,7 +104,7 @@ export default function RegisterForm() {
             <Form.Item
               label="Sexo"
               name="sex"
-              rules={[{ required: true, message: "Selecciona" }]}
+              rules={sexRules}
             >
               <Select
                 placeholder="Seleccionar"
@@ -116,7 +118,7 @@ export default function RegisterForm() {
             <Form.Item
               label="Fecha de nacimiento"
               name="borndate"
-              rules={[{ required: true, message: "Selecciona la fecha" }]}
+              rules={dateRules}
             >
               <DatePicker
                 format="DD/MM/YYYY"
@@ -133,10 +135,7 @@ export default function RegisterForm() {
             <Form.Item
               label="Correo electrónico"
               name="email"
-              rules={[
-                { required: true, message: "Ingresa tu correo" },
-                { type: "email", message: "Correo no válido" },
-              ]}
+              rules={emailRules}
             >
               <Input placeholder="Digitar correo" size="large" />
             </Form.Item>
@@ -155,7 +154,7 @@ export default function RegisterForm() {
                 <Form.Item
                   name="phone"
                   noStyle
-                  rules={[{ required: true, message: "Ingresa el número" }]}
+                  rules={phoneRules}
                 >
                   <Input placeholder="7777 7777" size="large" style={{ flex: 1 }} />
                 </Form.Item>
@@ -169,7 +168,7 @@ export default function RegisterForm() {
             <Form.Item
               label="Contraseña"
               name="password"
-              rules={[{ required: true, message: "Digita tu contraseña" }]}
+              rules={passwordRules}
             >
               <Input.Password
                 placeholder="Digitar contraseña"
@@ -182,17 +181,7 @@ export default function RegisterForm() {
               label="Repetir contraseña"
               name="confirmPassword"
               dependencies={["password"]}
-              rules={[
-                { required: true, message: "Repite la contraseña" },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error("Las contraseñas no coinciden"));
-                  },
-                }),
-              ]}
+              rules={confirmPasswordRules}
             >
               <Input.Password
                 placeholder="Digitar contraseña"

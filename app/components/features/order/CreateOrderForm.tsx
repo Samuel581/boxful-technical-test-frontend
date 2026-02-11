@@ -20,6 +20,8 @@ import { ordersSerivice } from "@/app/services/ordersService";
 import { DASHBOARD_HISTORY } from "@/app/constants/frontendRoute";
 import { COLOR_SECTION_BG, COLOR_SECONDARY_BG, COLOR_BORDER_GRAY, COLOR_SUCCESS, COLOR_TEXT_SECONDARY } from "@/app/constants/colors";
 import { FORM_LAYOUT, COUNTRY_CODE_OPTIONS, PRIMARY_BUTTON_STYLE } from "@/app/constants/formConstants";
+import { dateRules } from "@/app/form-rules/commonRules";
+import { recipientNameRules, recipientLastNameRules, recipientEmailRules, recipientPhoneRules, recolectionAddressRules, destinationAddressRules, stateRules, cityRules } from "@/app/form-rules/createOrderRules";
 
 const { Title, Text } = Typography;
 
@@ -35,7 +37,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Dirección de recolección"
             name="recolectionAddress"
-            rules={[{ required: true, message: "Ingresa la dirección" }]}
+            rules={recolectionAddressRules}
           >
             <Input
               placeholder="Colonia Las Magnolias, calle militar 1, San Salvador"
@@ -47,7 +49,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Fecha programada"
             name="programedDate"
-            rules={[{ required: true, message: "Selecciona la fecha" }]}
+            rules={dateRules}
           >
             <DatePicker
               placeholder="Seleccionar"
@@ -63,7 +65,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Nombres"
             name="recipientNames"
-            rules={[{ required: true, message: "Ingresa los nombres" }]}
+            rules={recipientNameRules}
           >
             <Input placeholder="Gabriela Reneé" size="large" />
           </Form.Item>
@@ -72,7 +74,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Apellidos"
             name="recipientLastNames"
-            rules={[{ required: true, message: "Ingresa los apellidos" }]}
+            rules={recipientLastNameRules}
           >
             <Input placeholder="Días López" size="large" />
           </Form.Item>
@@ -81,10 +83,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Correo electrónico"
             name="recipientEmail"
-            rules={[
-              { required: true, message: "Ingresa el correo" },
-              { type: "email", message: "Correo no válido" },
-            ]}
+            rules={recipientEmailRules}
           >
             <Input placeholder="gabbydiaz@gmail.com" size="large" />
           </Form.Item>
@@ -105,7 +104,7 @@ function CreateOrderStep1({
               <Form.Item
                 name="recipientCellphone"
                 noStyle
-                rules={[{ required: true, message: "Ingresa el teléfono" }]}
+                rules={recipientPhoneRules}
               >
                 <Input placeholder="7777 7777" size="large" style={{ flex: 1 }} />
               </Form.Item>
@@ -116,7 +115,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Dirección del destinatario"
             name="destinationAddress"
-            rules={[{ required: true, message: "Ingresa la dirección" }]}
+            rules={destinationAddressRules}
           >
             <Input
               placeholder="Final 49 Av. Sur y Bulevar Los Próceres, Smartcenter, Bodega #8, San Salvador"
@@ -131,7 +130,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Departamento"
             name="state"
-            rules={[{ required: true, message: "Ingresa el departamento" }]}
+            rules={stateRules}
           >
             <Input placeholder="San Salvador" size="large" />
           </Form.Item>
@@ -140,7 +139,7 @@ function CreateOrderStep1({
           <Form.Item
             label="Municipio"
             name="city"
-            rules={[{ required: true, message: "Ingresa el municipio" }]}
+            rules={cityRules}
           >
             <Input placeholder="San Salvador" size="large" />
           </Form.Item>
